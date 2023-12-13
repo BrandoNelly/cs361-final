@@ -11,7 +11,7 @@ class Track < TrackSegment
     @segments = segments.map { |segment| TrackSegment.new(segment) }
   end
 
-  def get_track_json()
+  def get_json_feature()
     json = '{'
     json += '"type": "Feature", '
     if @name != nil

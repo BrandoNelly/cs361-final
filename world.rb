@@ -16,15 +16,28 @@ end
       if index != 0
         segment +=","
       end
-        if feature.class == Track
-            segment += feature.get_track_json
-        elsif feature.class == Waypoint
-            segment += feature.get_waypoint_json
-      end
+        segment += feature.get_json_feature
     end
     segment + "]}"
   end
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 =begin

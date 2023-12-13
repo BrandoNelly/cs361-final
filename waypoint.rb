@@ -23,7 +23,7 @@ attr_reader :lat, :lon, :elevation, :name, :type
     @type = type
   end
 
-  def get_waypoint_json(indent=0)
+  def get_json_feature(indent=0)
     j = '{"type": "Feature",'
     j += '"geometry": {"type": "Point","coordinates": '
     j += "[#{@lon},#{@lat}"
