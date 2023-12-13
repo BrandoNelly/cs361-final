@@ -4,8 +4,8 @@ class Track
   def initialize(segments, name=nil)
     @name = name
     segment_objects = []
-    segments.each do |s|
-      segment_objects.append(TrackSegment.new(s))
+    segments.each do |segment|
+      segment_objects.append(TrackSegment.new(segment))
     end
     # set segments to segment_objects
     @segments = segment_objects
@@ -23,22 +23,22 @@ class Track
     j += '"type": "MultiLineString",'
     j +='"coordinates": ['
     # Loop through all the segment objects
-    @segments.each_with_index do |s, index|
+    @segments.each_with_index do |segment, index|
       if index > 0
         j += ","
       end
       j += '['
       # Loop through all the coordinates in the segment
       tsj = ''
-      s.coordinates.each do |c|
+      segment.coordinates.each do |coordinate|
         if tsj != ''
           tsj += ','
         end
         # Add the coordinate
         tsj += '['
-        tsj += "#{c.lon},#{c.lat}"
-        if c.ele != nil
-          tsj += ",#{c.ele}"
+        tsj += "#{coordinate.lon},#{coordinate.lat}"
+        if coordinate.elevation != nil
+          tsj += ",#{coordinate.elevation}"
         end
         tsj += ']'
       end
@@ -57,25 +57,24 @@ end
 
 class Point
 
-  attr_reader :lat, :lon, :ele
+  attr_reader :lat, :lon, :elevation
 
-  def initialize(lon, lat, ele=nil)
+  def initialize(lon, lat, elevation=nil)
     @lon = lon
     @lat = lat
-    @ele = ele
+    @elevation = elevation
   end
 end
 
 class Waypoint
 
+attr_reader :lat, :lon, :elevation, :name, :type
 
-
-attr_reader :lat, :lon, :ele, :name, :type
-
-  def initialize(lon, lat, ele=nil, name=nil, type=nil)
+  def initialize(lon, lat, elevation=nil, name=nil, type=nil)
+	
     @lat = lat
     @lon = lon
-    @ele = ele
+    @elevation = elevation
     @name = name
     @type = type
   end
@@ -85,8 +84,8 @@ attr_reader :lat, :lon, :ele, :name, :type
     # if name is not nil or type is not nil
     j += '"geometry": {"type": "Point","coordinates": '
     j += "[#{@lon},#{@lat}"
-    if ele != nil
-      j += ",#{@ele}"
+    if elevation != nil
+      j += ",#{@elevation}"
     end
     j += ']},'
     if name != nil or type != nil
@@ -108,53 +107,46 @@ attr_reader :lat, :lon, :ele, :name, :type
 end
 
 class World
-def initialize(name, things)
+def initialize(name, features)
   @name = name
-  @features = things
+  @features = features
 end
-  def add_feature(f)
-    @features.append(t)
+  def add_feature(feature)
+    @features.append(track)
   end
 
   def to_geojson(indent=0)
     # Write stuff
-    s = '{"type": "FeatureCollection","features": ['
-    @features.each_with_index do |f,i|
-      if i != 0
-        s +=","
+    segment = '{"type": "FeatureCollection","features": ['
+    @features.each_with_index do |feature,index|
+      if index != 0
+        segment +=","
       end
-        if f.class == Track
-            s += f.get_track_json
-        elsif f.class == Waypoint
-            s += f.get_waypoint_json
+        if feature.class == Track
+            segment += feature.get_track_json
+        elsif feature.class == Waypoint
+            segment += feature.get_waypoint_json
       end
     end
-    s + "]}"
+    segment + "]}"
   end
 end
 
 def main()
-  w = Waypoint.new(-121.5, 45.5, 30, "home", "flag")
-  w2 = Waypoint.new(-121.5, 45.6, nil, "store", "dot")
-  ts1 = [
-  Point.new(-122, 45),
-  Point.new(-122, 46),
-  Point.new(-121, 46),
-  ]
+  waypoint1 = Waypoint.new(-121.5, 45.5, 30, "home", "flag")
+  waypoint2 = Waypoint.new(-121.5, 45.6, nil, "store", "dot")
+  
+  track_segment1 = [ Point.new(-122, 45), Point.new(-122, 46), Point.new(-121, 46),]
+  track_segment2 = [ Point.new(-121, 45), Point.new(-121, 46),]
+  track_segment3 = [Point.new(-121, 45.5), Point.new(-122, 45.5),]
 
-  ts2 = [ Point.new(-121, 45), Point.new(-121, 46), ]
+  track1 = Track.new([track_segment1, track_segment2], "track 1")
+  track2 = Track.new([track_segment3], "track 2")
 
-  ts3 = [
-    Point.new(-121, 45.5),
-    Point.new(-122, 45.5),
-  ]
-
-  t = Track.new([ts1, ts2], "track 1")
-  t2 = Track.new([ts3], "track 2")
-
-  world = World.new("My Data", [w, w2, t, t2])
+  world = World.new("My Data", [waypoint1, waypoint2, track1, track2])
 
   puts world.to_geojson()
+  
 end
 
 if File.identical?(__FILE__, $0)
