@@ -1,4 +1,16 @@
-class Waypoint
+class Point
+
+  attr_reader :lat, :lon, :elevation
+
+  def initialize(lon, lat, elevation=nil)
+    @lon = lon
+    @lat = lat
+    @elevation = elevation
+  end
+end
+
+
+class Waypoint < Point
 
 attr_reader :lat, :lon, :elevation, :name, :type
 
@@ -13,7 +25,6 @@ attr_reader :lat, :lon, :elevation, :name, :type
 
   def get_waypoint_json(indent=0)
     j = '{"type": "Feature",'
-    # if name is not nil or type is not nil
     j += '"geometry": {"type": "Point","coordinates": '
     j += "[#{@lon},#{@lat}"
     if elevation != nil
@@ -25,11 +36,11 @@ attr_reader :lat, :lon, :elevation, :name, :type
       if name != nil
         j += '"title": "' + @name + '"'
       end
-      if type != nil  # if type is not nil
+      if type != nil 
         if name != nil
           j += ','
         end
-        j += '"icon": "' + @type + '"'  # type is the icon
+        j += '"icon": "' + @type + '"' 
       end
       j += '}'
     end

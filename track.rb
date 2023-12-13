@@ -1,30 +1,32 @@
-require_relative 'track_segment'
+class TrackSegment 
+  attr_reader :coordinates
+  def initialize(coordinates)
+    @coordinates = coordinates
+  end
+end
 
-
-class Track
+class Track < TrackSegment
    def initialize(segments, name = nil)
     @name = name
     @segments = segments.map { |segment| TrackSegment.new(segment) }
   end
 
   def get_track_json()
-    j = '{'
-    j += '"type": "Feature", '
+    json = '{'
+    json += '"type": "Feature", '
     if @name != nil
-      j+= '"properties": {'
-      j += '"title": "' + @name + '"'
-      j += '},'
+      json+= '"properties": {'
+      json += '"title": "' + @name + '"'
+      json += '},'
     end
-    j += '"geometry": {'
-    j += '"type": "MultiLineString",'
-    j +='"coordinates": ['
-    # Loop through all the segment objects
+    json += '"geometry": {'
+    json += '"type": "MultiLineString",'
+    json +='"coordinates": ['
     @segments.each_with_index do |segment, index|
       if index > 0
-        j += ","
+        json += ","
       end
-      j += '['
-      # Loop through all the coordinates in the segment
+      json += '['
       tsj = ''
       segment.coordinates.each do |coordinate|
         if tsj != ''
@@ -38,10 +40,10 @@ class Track
         end
         tsj += ']'
       end
-      j+=tsj
-      j+=']'
+      json+=tsj
+      json+=']'
     end
-    j + ']}}'
+    json + ']}}'
   end
 end
 

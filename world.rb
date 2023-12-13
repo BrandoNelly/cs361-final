@@ -1,6 +1,3 @@
-require_relative 'track'
-
-
 class World
 def initialize(name, features)
   @name = name
@@ -28,3 +25,30 @@ end
     segment + "]}"
   end
 end
+
+
+=begin
+class FeatureJson
+		def get_json
+	end
+
+	class TrackJson < FeatureJson
+
+		
+		def get_json
+			if feature.class == Track
+				segment += feature.get_track_json
+			end
+		end
+	end
+
+
+	class WaypointJson < FeatureJson
+		
+		def get_json
+			if feature.class == Waypoint
+				segment += feature.get_waypoint_json
+			end
+		end
+	end
+=end
