@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require_relative 'track'
 require_relative 'waypoint'
+require_relative 'point'
 require_relative 'world'
 
 
